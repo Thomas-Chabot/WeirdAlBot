@@ -31,3 +31,6 @@ export async function Discord(...data) {
 export async function Twitter(...data){
     writeToLogs(Configuration.LogFiles.Twitter, ...data);
 }
+export async function Control(...data){
+    writeToLogs(Configuration.LogFiles.Control, ...data);
+}
