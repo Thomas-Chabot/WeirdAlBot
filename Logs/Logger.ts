@@ -25,3 +25,9 @@ async function writeToLogs(logFile : string, ...data){
 
 // Note: Create functions that can be exported here for writing to specific log files.
 // These will use the writeToLogs() file with a specific path.
+export async function Discord(...data) {
+    writeToLogs(Configuration.LogFiles.Discord, ...data);
+}
+export async function Twitter(...data){
+    writeToLogs(Configuration.LogFiles.Twitter, ...data);
+}

@@ -1,5 +1,7 @@
 {
     "LogFiles": {
         "Directory": "Logs\\LogFiles",
+        "Discord": "Discord.log",
+        "Twitter": "Twitter.log"
     }
 }
