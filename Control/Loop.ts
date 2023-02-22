@@ -38,9 +38,9 @@ async function CheckForNewTweet(){
 
     // Alert everyone
     const fixedLink = FixTweetLink(newestTweet);
-    TargetUsers.forEach(userId => {
+    TargetUsers.forEach(async userId => {
         try {
-            bot.SendMessage(userId, fixedLink);
+            await bot.SendMessage(userId, fixedLink);
         } catch (ex) {
             Log("Failed to send message to", userId, "with exception:", ex.message);
         }
