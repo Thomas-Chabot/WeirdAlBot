@@ -19,6 +19,10 @@ async function CheckForNewTweet(){
         newestTweet = await GetTweetLink();
     } catch (ex) {
         Log("Failed to find new tweet with exception: ", ex.message);
+
+        // Reboot the browser in case the browser session closed
+        await scraper.Reboot();
+
         return;
     }
 

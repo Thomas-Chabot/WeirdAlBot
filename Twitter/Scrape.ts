@@ -26,6 +26,12 @@ export class Scraper {
         this._page = null;
     }
 
+    async Reboot(){
+        await this.Cleanup();
+
+        // Next time we call GetPage, it'll launch and grab the new page
+    }
+
     private async GetPage(){
         if (this._browser === null){
             this._browser = await puppeteer.launch();
