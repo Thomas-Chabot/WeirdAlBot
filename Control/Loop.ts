@@ -19,6 +19,7 @@ async function CheckForNewTweet(){
         newestTweet = await GetTweetLink();
     } catch (ex) {
         Log("Failed to find new tweet with exception: ", ex.message);
+        return;
     }
 
     if (newestTweet === lastTweet){
@@ -43,6 +44,7 @@ async function CheckForNewTweet(){
             await bot.SendMessage(userId, fixedLink);
         } catch (ex) {
             Log("Failed to send message to", userId, "with exception:", ex.message);
+            return;
         }
     });
 }
