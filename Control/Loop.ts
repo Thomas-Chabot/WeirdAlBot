@@ -11,7 +11,7 @@ const GetTweetLink = scraper.GetMostRecentTweetUrl.bind(scraper, "WeirdAlStims")
 const FixTweetLink = (link: string)=>link.replace("twitter", "fxtwitter");
 const GetTweetId = (link: string)=>link.match(/\d+$/)[0];
 
-let firstRun = true;
+let firstRun = false;
 
 async function CheckForNewTweet(){
     let newestTweet;
