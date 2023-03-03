@@ -3,9 +3,14 @@
         "Directory": "Logs\\LogFiles",
         "Control": "Control.log",
         "Discord": "Discord.log",
-        "Twitter": "Twitter.log"
+        "Twitter": "Twitter.log",
+        "Database": "Database.log"
     },
     "TargetUsers": [
+    ],
+    "CheckTimes": [
+        15,
+        45
     ],
     "Interval": 1
 }

@@ -34,3 +34,6 @@ export async function Twitter(...data){
 export async function Control(...data){
     writeToLogs(Configuration.LogFiles.Control, ...data);
 }
+export async function Database(...data){
+    writeToLogs(Configuration.LogFiles.Database, ...data);
+}
