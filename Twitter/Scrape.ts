@@ -1,8 +1,9 @@
 import puppeteer from 'puppeteer';
+import { ITwitterInterface } from '../Interfaces';
 
 const TweetLinkSelector = "div[aria-label*='Timeline'] a[dir*='ltr']";
 
-export class Scraper {
+export class Scraper implements ITwitterInterface {
     _browser;
     _page;
 
@@ -11,12 +12,21 @@ export class Scraper {
         this._page = null;
     }
 
+    async GetMostRecentTweetId(username: string){
+        const tweetUrl = await this.GetMostRecentTweetUrl(username);
+        return tweetUrl.match(/\d+$/)[0];
+    }
+
     async GetMostRecentTweetUrl(username: string){
         const page = await this.GetPage();
         await page.goto(`https://twitter.com/${username}`);
 
         await page.waitForSelector(TweetLinkSelector);
         return page.$eval(TweetLinkSelector, (el) => el.href);
+    }
+
+    ConvertToUrl(tweetId: string){
+        return `https://twitter.com/weirdalstims/status/${tweetId}`;
     }
 
     async Cleanup(){

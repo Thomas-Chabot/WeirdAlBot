@@ -1,35 +1,29 @@
-import { Scraper } from "../Twitter";
+import { TwitterApi } from "../Twitter";
 import { Bot } from "../Discord";
 import { TargetUsers, Interval } from "../Configuration.json" 
 import { Control as Log } from "../Logs/Logger"
 import * as CacheDb from "../Database/cache";
+import { ITwitterInterface } from "../Interfaces";
 
-const scraper = new Scraper();
+let twitter : ITwitterInterface;
 const bot = new Bot();
 
-const GetTweetLink = scraper.GetMostRecentTweetUrl.bind(scraper, "WeirdAlStims");
+const accountName = "WeirdAlStims";
+let GetTweetId: ()=>Promise<string>;
 const FixTweetLink = (link: string)=>link.replace("twitter", "fxtwitter");
-const GetTweetId = (link: string)=>link.match(/\d+$/)[0];
-
-let firstRun = false;
 
 async function CheckForNewTweet(){
-    let newestTweet;
+    let tweetId;
     try {
-        newestTweet = await GetTweetLink();
+        tweetId = await GetTweetId();
     } catch (ex) {
         Log("Failed to find new tweet with exception: ", ex.message);
-
-        // Reboot the browser in case the browser session closed
-        await scraper.Reboot();
-
         return;
     }
 
     // If we've already sent this tweet, ignore it
-    const tweetId = GetTweetId(newestTweet);
     const alreadySeenTweet = await CacheDb.HasTweet(tweetId);
-    Log("Checking for tweet; found ", newestTweet, " which has the tweet ID of: ", tweetId);
+    Log("Checking for tweet; found ", tweetId);
     Log("\tThis tweet has been seen before: ", alreadySeenTweet);
     if (alreadySeenTweet){
         return;
@@ -38,18 +32,8 @@ async function CheckForNewTweet(){
     // Add the tweet to the database
     await CacheDb.AddTweet(tweetId);
 
-    // New tweet
-    Log("Found new tweet: ", newestTweet);
-
-    // NOTE: If this is the first tweet found, we don't want to send the video.
-    // This is to prevent spamming if the bot gets rebooted
-    if (firstRun){
-        firstRun = false;
-        return;
-    }
-
     // Alert everyone
-    const fixedLink = FixTweetLink(newestTweet);
+    const fixedLink = FixTweetLink(twitter.ConvertToUrl(tweetId));
     TargetUsers.forEach(async userId => {
         try {
             await bot.SendMessage(userId, fixedLink);
@@ -67,7 +51,6 @@ export async function Loop(){
 
     }
 
-
     // Note: This is pretty hardcoded, ideally 
     setTimeout(Loop, Interval * 1000);
 }
@@ -78,4 +61,13 @@ export async function Setup(){
 
     await CacheDb.CreateDbTable();
     console.log("Cache database created");
+
+    // Twitter API keys
+    const consumerKey = process.env.TWITTER_CONSUMER_KEY;
+    const consumerSecret = process.env.TWITTER_CONSUMER_SECRET;
+    const accessTokenKey = process.env.TWITTER_ACCESS_KEY;
+    const accessTokenSecret = process.env.TWITTER_ACCESS_SECRET;
+    twitter = new TwitterApi(consumerKey, consumerSecret, accessTokenKey, accessTokenSecret);
+    
+    GetTweetId = twitter.GetMostRecentTweetId.bind(twitter, accountName);
 }
