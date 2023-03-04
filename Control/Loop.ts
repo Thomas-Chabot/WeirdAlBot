@@ -1,6 +1,6 @@
 import { TwitterApi } from "../Twitter";
 import { Bot } from "../Discord";
-import { TargetUsers, Interval } from "../Configuration.json" 
+import { TargetUsers, Interval, TrackingAccount } from "../Configuration.json" 
 import { Control as Log } from "../Logs/Logger"
 import * as CacheDb from "../Database/cache";
 import { ITwitterInterface } from "../Interfaces";
@@ -8,7 +8,6 @@ import { ITwitterInterface } from "../Interfaces";
 let twitter : ITwitterInterface;
 const bot = new Bot();
 
-const accountName = "WeirdAlStims";
 let GetTweetId: ()=>Promise<string>;
 const FixTweetLink = (link: string)=>link.replace("twitter", "fxtwitter");
 
@@ -69,5 +68,5 @@ export async function Setup(){
     const accessTokenSecret = process.env.TWITTER_ACCESS_SECRET;
     twitter = new TwitterApi(consumerKey, consumerSecret, accessTokenKey, accessTokenSecret);
     
-    GetTweetId = twitter.GetMostRecentTweetId.bind(twitter, accountName);
+    GetTweetId = twitter.GetMostRecentTweetId.bind(twitter, TrackingAccount);
 }
