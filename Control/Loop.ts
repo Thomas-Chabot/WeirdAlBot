@@ -29,6 +29,8 @@ async function CheckForNewTweet(){
     // If we've already sent this tweet, ignore it
     const tweetId = GetTweetId(newestTweet);
     const alreadySeenTweet = await CacheDb.HasTweet(tweetId);
+    Log("Checking for tweet; found ", newestTweet, " which has the tweet ID of: ", tweetId);
+    Log("\tThis tweet has been seen before: ", alreadySeenTweet);
     if (alreadySeenTweet){
         return;
     }
